@@ -64,7 +64,7 @@ def MyFileDecrypt(cipher, iv, key, ext):
 	fileLoc = input("What would you like to save the file as?")
 	newFile = fileLoc + ext
 	nF = open(newFile, "wb")
-	nF.write(plainText)
+	nF.write(base64.b64decode(plainText))
 	nF.close()
 	print "File decrypted"
 	

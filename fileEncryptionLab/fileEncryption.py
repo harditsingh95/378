@@ -9,18 +9,19 @@ keyLength = 32
 ivLength = 16
 #Independent variable will be 16 bytes
 blockSize = 128
+message = "Hello! This is an unencrypted message!"
+encryptedFile = 'Encrypted'
+
 def MyEncrypt(message, key):
 	# print (len(key))
 	if len(key) == 32:
 		#Generate random variable for IV lrngth of ivLength
-		print "Plaintext message:", message
 		IV = os.urandom(ivLength)
 		ciph = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend())
 		encryptor = ciph.encryptor();	
 		padder = padding.PKCS7(blockSize).padder()
 		padData = padder.update(message) + padder.finalize()
 		cipherText = encryptor.update(padData) +encryptor.finalize()
-		print("Encrypted message:", cipherText)
 	else:
 		cipherText = 0;
 		IV = 0
@@ -32,21 +33,43 @@ def MyDecrypt(cipherText,IV, key):
 	plain = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend())
 	decryptor = plain.decryptor()
 	plainText = decryptor.update(cipherText) + decryptor.finalize()
-	print "Decrypted message: ", plainText
+	return plainText
 #Generate a random key for cpher text of length keyLength
 key = os.urandom(keyLength)
 #Encrypt following message
-cipherText, iv = MyEncrypt("Hello everyone!This is my unencryped message!", key)
-MyDecrypt(cipherText, iv, key)
+##print "Unencrypted message: ", message
+##cipherText, iv = MyEncrypt(message, key)
+##print "Encrypted message: ", cipherText
+##print MyDecrypt(cipherText, iv, key)
 
-cipherText, iv, key, ext = MyFileEncrypt()
+
 def MyFileEncrypt(filepath):
-	key = urandom(keyLength)
+	key = os.urandom(keyLength)
 	#SPlit filepath in two
 	fileName, ext = os.path.splitext(filepath)
 	with open(filepath, "rb") as jpgFile:
 		fileAsAString = base64.b64encode(jpgFile.read())
-	cipher, IV = myEncrypt(fileAsAString, key)
+	cipher, IV = MyEncrypt(fileAsAString, key)
+	saveAs = input("Save file as:")
+	fileEncrypted = saveAs + ext
+	fEncrypt = open(fileEncrypted,"wb")
+	fEncrypt.write(cipher)
+	fEncrypt.close()
 	return cipher, IV, key, ext
-def MyfileDecrypt(filepath):
-	return 0
+def MyFileDecrypt(cipher, iv, key, ext):
+	plainText = MyDecrypt(cipher, iv,key)
+	#unpadding?
+	fileLoc = input("What would you like to save the file as?")
+	newFile = fileLoc + ext
+	nF = open(newFile, "wb")
+	nF.write(plainText)
+	nF.close()
+	print "File decrypted"
+	
+# TEST - cipherText, iv, key, ext = MyFileEncrypt('Alliance.png')
+def main():
+	encryptedFile = input("Enter the location of the file you want encryted")
+	cipherText, iv, key, ext = MyFileEncrypt(encryptedFile)
+	MyFileDecrypt(cipherText, iv, key, ext)
+if __name__=="__main__":
+	main()

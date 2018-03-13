@@ -1,5 +1,4 @@
 import os
-
 import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import(Cipher, algorithms, modes)
@@ -40,3 +39,14 @@ key = os.urandom(keyLength)
 cipherText, iv = MyEncrypt("Hello everyone!This is my unencryped message!", key)
 MyDecrypt(cipherText, iv, key)
 
+cipherText, iv, key, ext = MyFileEncrypt()
+def MyFileEncrypt(filepath):
+	key = urandom(keyLength)
+	#SPlit filepath in two
+	fileName, ext = os.path.splitext(filepath)
+	with open(filepath, "rb") as jpgFile:
+		fileAsAString = base64.b64encode(jpgFile.read())
+	cipher, IV = myEncrypt(fileAsAString, key)
+	return cipher, IV, key, ext
+def MyfileDecrypt(filepath):
+	return 0

@@ -33,6 +33,8 @@ def MyDecrypt(cipherText,IV, key):
 	plain = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend())
 	decryptor = plain.decryptor()
 	plainText = decryptor.update(cipherText) + decryptor.finalize()
+	unpadder = padding.PKCS7(blockSize).unpadder()
+	plainText = unpadder.update(plainText) + unpadder.finalize()
 	return plainText
 #Generate a random key for cpher text of length keyLength
 key = os.urandom(keyLength)

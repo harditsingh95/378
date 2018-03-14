@@ -1,9 +1,9 @@
 
-my_private_key = rsa.generate_private_key(public_exponent = 65537, key_size=1024, backend=default_backend())
-my_public_key = my_private_key.public_key()
-fPrivKey = open("private.pem", "wb")
-fPrivKey.write(my_private_key.exportKey('PEM'))
-fPrivKey.close()
+#my_private_key = rsa.generate_private_key(public_exponent = 65537, key_size=1024, backend=default_backend())
+#my_public_key = my_private_key.public_key()
+#fPrivKey = open("private.pem", "wb")
+#fPrivKey.write(my_private_key.exportKey('PEM'))
+#fPrivKey.close()
 import myEncryption
 import myDecryption
 import os

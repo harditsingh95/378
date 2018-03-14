@@ -3,7 +3,7 @@ import myEncryption
 import myDecryption
 import os
 import constants
-import RSAencrypt
+import RSAEncrypt
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
@@ -21,18 +21,13 @@ def main():
 	print "Now decoding your message..."
 	print plain
 	#Prompt user until valid file is found or chooses to exit
-	while(True):
-		encryptedFile = raw_input("Enter the location of the file you want encrypted (E to exit): ")
-		if encryptedFile =="E":
-			break;
-		if os.path.isfile(encryptedFile):
-			cipherText, iv, key, ext = myEncryption.MyFileEncrypt(encryptedFile)
-			myDecryption.MyFileDecrypt(cipherText, iv, key, ext)
-		else:
-			print "File not found!"
+	encryptedFile = promptForFile()
+	if encryptedFile !="E":
+		cipherText, iv, key, ext = myEncryption.MyFileEncrypt(encryptedFile)
+		myDecryption.MyFileDecrypt(cipherText, iv, key, ext)
 	print ("Time to generate an RSA key:")
 	#Prompt user for path, then generate private key
-	RSA_key_path = raw_input("Please enter the path where you would like to save the key: ")
+	RSA_key_path = input("Please enter the path where you would like to save the keys: ")
 	rsaPrivKey = rsa.generate_private_key(public_exponent=65537, key_size = 2048, backend = default_backend())
 	#Generate public key from privatekey
 	rsaPubKey = rsaPrivKey.public_key()
@@ -47,7 +42,17 @@ def main():
 	createFile = open(RSA_key_path+".pub", "wb")
 	createFile.write(pubPem)
 	createFile.close()
-	RSACipher, cipher, IV, ext = RSAencrypt.myRSAEncrypt('gerardo.txt', RSA_key_path)
-#End of main()	
+	encryptedFile = promptForFile()
+	RSACipher, cipher, IV, ext = RSAEncrypt.myRSAEncrypt(encryptedFile, RSA_key_path)
+#End of main()
+def promptForFile():
+	while(True):
+		userFile = raw_input("Enter location of file: ")
+		if userFile == "E":
+			return userFile
+		if os.path.isfile(userFile):
+			return userFile
+		else:
+			print ("File not found!")
 if __name__=="__main__":
   main()

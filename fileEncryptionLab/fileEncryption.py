@@ -9,8 +9,6 @@ keyLength = 32
 ivLength = 16
 #Independent variable will be 16 bytes
 blockSize = 128
-message = "Hello! This is an unencrypted message!"
-encryptedFile = 'Encrypted'
 
 def MyEncrypt(message, key):
 	if len(key) == 32:
@@ -62,12 +60,22 @@ def MyFileDecrypt(cipher, iv, key, ext):
 # TEST - cipherText, iv, key, ext = MyFileEncrypt('Alliance.png')
 def main():
 	print ("###JPG file encrypter###")
-	print ("This program will encrypt a JPG file and then decrypt it")
-	encryptedFile = raw_input("Enter the location of the file you want encrypted: ")
-	if os.path.isfile(encryptedFile):
-		cipherText, iv, key, ext = MyFileEncrypt(encryptedFile)
-		MyFileDecrypt(cipherText, iv, key, ext)
-	else:
-		print "File not found!"
+	message = raw_input("Please enter a message to encrypt. A random key will be generated for you.")
+	key = os.urandom(keyLength)
+	c, iv = MyEncrypt(message, key)
+	print "Ciphertext of your message: ", c
+	print "IV of your message: ",iv
+	plain = MyDecrypt(c, iv, key)
+	print "Now decoding your message..."
+	print plain
+	while(True):
+		encryptedFile = raw_input("Enter the location of the file you want encrypted (E to exit): ")
+		if encryptedFile =="E":
+			break;
+		if os.path.isfile(encryptedFile):
+			cipherText, iv, key, ext = MyFileEncrypt(encryptedFile)
+			MyFileDecrypt(cipherText, iv, key, ext)
+		else:
+			print "File not found!"
 if __name__=="__main__":
 	main()

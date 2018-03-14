@@ -13,12 +13,12 @@ message = "Hello! This is an unencrypted message!"
 encryptedFile = 'Encrypted'
 
 def MyEncrypt(message, key):
-	# print (len(key))
 	if len(key) == 32:
 		#Generate random variable for IV lrngth of ivLength
 		IV = os.urandom(ivLength)
 		ciph = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend())
-		encryptor = ciph.encryptor();	
+		encryptor = ciph.encryptor();
+		#Pad data so that it meets bit amount needed
 		padder = padding.PKCS7(blockSize).padder()
 		padData = padder.update(message) + padder.finalize()
 		cipherText = encryptor.update(padData) +encryptor.finalize()
@@ -29,22 +29,13 @@ def MyEncrypt(message, key):
 	return cipherText, IV
 
 def MyDecrypt(cipherText,IV, key):
-	print "Attempting to decrypt message..."
+	print ("Attempting to decrypt message...")
 	plain = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend())
 	decryptor = plain.decryptor()
 	plainText = decryptor.update(cipherText) + decryptor.finalize()
 	unpadder = padding.PKCS7(blockSize).unpadder()
 	plainText = unpadder.update(plainText) + unpadder.finalize()
 	return plainText
-#Generate a random key for cpher text of length keyLength
-key = os.urandom(keyLength)
-#Encrypt following message
-##print "Unencrypted message: ", message
-##cipherText, iv = MyEncrypt(message, key)
-##print "Encrypted message: ", cipherText
-##print MyDecrypt(cipherText, iv, key)
-
-
 def MyFileEncrypt(filepath):
 	key = os.urandom(keyLength)
 	#SPlit filepath in two
@@ -52,7 +43,7 @@ def MyFileEncrypt(filepath):
 	with open(filepath, "rb") as jpgFile:
 		fileAsAString = base64.b64encode(jpgFile.read())
 	cipher, IV = MyEncrypt(fileAsAString, key)
-	saveAs = input("Save file as:")
+	saveAs = raw_input("Save file as: ")
 	fileEncrypted = saveAs + ext
 	fEncrypt = open(fileEncrypted,"wb")
 	fEncrypt.write(cipher)
@@ -61,17 +52,22 @@ def MyFileEncrypt(filepath):
 def MyFileDecrypt(cipher, iv, key, ext):
 	plainText = MyDecrypt(cipher, iv,key)
 	#unpadding?
-	fileLoc = input("What would you like to save the file as?")
+	fileLoc = raw_input("What would you like to save the file as? ")
 	newFile = fileLoc + ext
 	nF = open(newFile, "wb")
 	nF.write(base64.b64decode(plainText))
 	nF.close()
-	print "File decrypted"
+	print ("File decrypted!")
 	
 # TEST - cipherText, iv, key, ext = MyFileEncrypt('Alliance.png')
 def main():
-	encryptedFile = input("Enter the location of the file you want encryted")
-	cipherText, iv, key, ext = MyFileEncrypt(encryptedFile)
-	MyFileDecrypt(cipherText, iv, key, ext)
+	print ("###JPG file encrypter###")
+	print ("This program will encrypt a JPG file and then decrypt it")
+	encryptedFile = raw_input("Enter the location of the file you want encrypted: ")
+	if os.path.isfile(encryptedFile):
+		cipherText, iv, key, ext = MyFileEncrypt(encryptedFile)
+		MyFileDecrypt(cipherText, iv, key, ext)
+	else:
+		print "File not found!"
 if __name__=="__main__":
 	main()

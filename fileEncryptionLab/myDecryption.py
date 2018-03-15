@@ -21,7 +21,7 @@ def MyFileDecrypt(cipher, iv, key, ext):
 	#Get plaintext from cipherText in MyDecrypt function
 	plainText = MyDecrypt(cipher, iv,key)
 	#Ask user for filename for new file
-	fileLoc = raw_input("What would you like to save the file as? ")
+	fileLoc = input("What would you like to save the file as? ")
 	newFile = fileLoc + ext
 	#Create new file, write to it
 	nF = open(newFile, "wb")

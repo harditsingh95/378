@@ -1,5 +1,6 @@
 import os
 import base64
+from base64 import b64encode,b64decode
 import constants
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import(Cipher, algorithms, modes)
@@ -11,12 +12,12 @@ def MyEncrypt(message, key):
 		#Generate random variable for IV lrngth of ivLength
 		IV = os.urandom(constants.ivLength)
 		#Create ciphertext in CBC mode
-		ciph = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend())
-		encryptor = ciph.encryptor();
+		encryptor = Cipher(algorithms.AES(key), modes.CBC(IV), backend=default_backend()).encryptor()
 		#Pad data so that it meets bit amount needed
 		padder = padding.PKCS7(constants.blockSize).padder()
 		padData = padder.update(message) + padder.finalize()
 		cipherText = encryptor.update(padData) +encryptor.finalize()
+		##cipherText = encryptor.update(byteMessage) + encryptor.finalize()
 	else:
 		cipherText = 0;
 		IV = 0
@@ -33,7 +34,7 @@ def MyFileEncrypt(filepath):
 	#Call MyEncrypt to encode string as ciphertext
 	cipher, IV = MyEncrypt(fileAsAString, key)
 	#Prompt user for what they would like to save the name as and add custom extension
-	saveAs = raw_input("Save file as: ")
+	saveAs = input("Save file as: ")
 	fileEncrypted = saveAs + ".encrypted"
 	#Create new file and write cipher text to it
 	fEncrypt = open(fileEncrypted,"wb")

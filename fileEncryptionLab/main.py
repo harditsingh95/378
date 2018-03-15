@@ -10,12 +10,7 @@ from cryptography.hazmat.backends import default_backend
 
 #Beginning of main 
 def main():
-	#Prompt user until valid file is found or chooses to exit
-	encryptedFile = promptForFile()
-	if encryptedFile !="E":
-		cipherText, iv, key, ext = myEncryption.MyFileEncrypt(encryptedFile)
-		myDecryption.MyFileDecrypt(cipherText, iv, key, ext)
-	print ("RSA key generation")
+	print ("RSA key generation and encryption")
 	print ("A public key and private key will be generated with file you provide.")
 	#Prompt user for path, then generate private key
 	RSA_key_path = input("Please enter the path where you would like to save the keys and name: ")
@@ -43,6 +38,7 @@ def main():
 	createFile = open(RSA_key_path+".pub", "wb")
 	createFile.write(pubPem)
 	createFile.close()
+	print("Keys have been created at ",RSA_key_path)
 	print ("Enter the location of the file you would like to RSA encrypt")
 	encryptedFile = promptForFile()
 	print ("Enter location of the public key (.pub extension): ")

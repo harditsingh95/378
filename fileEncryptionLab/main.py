@@ -20,10 +20,8 @@ def main():
 	#Serialize keys for file
 	privPem = rsaPrivKey.private_bytes(encoding=serialization.Encoding.PEM, format = serialization.PrivateFormat.TraditionalOpenSSL, encryption_algorithm=serialization.NoEncryption())
 	pubPem = rsaPubKey.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo)
-	#Write keys to file
+	#split path from file name
 	kPath, kName =os.path.split(RSA_key_path)
-	print (kPath)
-	print (kName)
 	#Check if path is a directory, create it if it does not exist
 	if kPath != "":
 		os.makedirs(kPath)
@@ -50,6 +48,7 @@ def main():
 	RSAEncrypt.myRSADecrypt(RSACipher, cipher, IV, ext, privPath)
 #End of main()
 def promptForFile():
+	#Prompt to check if file path is valid. E to exit
 	while(True):
 		userFile = input("Enter location of file: ")
 		if userFile == "E":

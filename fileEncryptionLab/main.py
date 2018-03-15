@@ -10,6 +10,10 @@ from cryptography.hazmat.backends import default_backend
 
 #Beginning of main 
 def main():
+	encryptedFile = promptForFile()
+	if encryptedFile!="E":
+		cipherText, iv, key, ext = myEncryption.MyFileEncrypt(encryptedFile)
+		myDecryption.MyFileDecrypt(cipherText, iv, key, ext)
 	print ("RSA key generation and encryption")
 	print ("A public key and private key will be generated with file you provide.")
 	#Prompt user for path, then generate private key

@@ -11,15 +11,6 @@ from cryptography.hazmat.backends import default_backend
 #Beginning of main
 #Need to separate this and make it prompt user 
 def main():
-	print ("###JPG file encrypter###")
-	message = input("Please enter a message to encrypt. A random key will be generated for you.")
-	key = os.urandom(constants.keyLength)
-	#c, iv = myEncryption.MyEncrypt('yo', key)
-	print ("Ciphertext of your message: ")
-	print ("IV of your message: ")
-	#plain = myDecryption.MyDecrypt(c, iv, key)
-	print ("Now decoding your message...")
-	#print (plain)
 	#Prompt user until valid file is found or chooses to exit
 	encryptedFile = promptForFile()
 	if encryptedFile !="E":
@@ -49,6 +40,10 @@ def main():
 	print ("Enter location of the public key (.pub extension): ")
 	rsaPath = promptForFile()
 	RSACipher, cipher, IV, ext = RSAEncrypt.myRSAEncrypt(encryptedFile,rsaPath)
+	print ("Let's decrypt that file:")
+	print("Enterlocation of private key(.pem extension):")
+	privPath = promptForFile()
+	RSAEncrypt.myRSADecrypt(RSACipher, cipher, IV, ext, privPath)
 #End of main()
 def promptForFile():
 	while(True):

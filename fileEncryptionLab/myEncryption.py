@@ -34,7 +34,7 @@ def MyFileEncrypt(filepath):
 	#Call MyEncrypt to encode string as ciphertext
 	cipher, IV = MyEncrypt(fileAsAString, key)
 	#Prompt user for what they would like to save the name as and add custom extension
-	saveAs = input("Save file as: ")
+	saveAs = input("Save encrypted file as (will be assigned .cryp extension: ")
 	fileEncrypted = saveAs + ".cryp"
 	#Create new file and write cipher text to it
 	fEncrypt = open(fileEncrypted,"wb")

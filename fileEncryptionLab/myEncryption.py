@@ -33,11 +33,4 @@ def MyFileEncrypt(filepath):
 		fileAsAString = base64.b64encode(jpgFile.read())
 	#Call MyEncrypt to encode string as ciphertext
 	cipher, IV = MyEncrypt(fileAsAString, key)
-	#Prompt user for what they would like to save the name as and add custom extension
-	saveAs = input("Save encrypted file as (will be assigned .cryp extension: ")
-	fileEncrypted = saveAs + ".cryp"
-	#Create new file and write cipher text to it
-	fEncrypt = open(fileEncrypted,"wb")
-	fEncrypt.write(cipher)
-	fEncrypt.close()
 	return cipher, IV, key, ext

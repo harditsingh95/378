@@ -84,4 +84,4 @@ def promptForFile():
 		else:
 			print ("File not found!")
 if __name__=="__main__":
-main()
+	main()

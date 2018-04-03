@@ -25,5 +25,5 @@ def myRSADecrypt(RSACiph, c, iv, tag, ext, privPath):
  encKey = rsa1
  hKey = rsa2
  #Pass decrypted key along with other params to decrypt
- myDecryption.MyFileDecrypt(c,iv,encKey, hKey, ext)
+ myDecryption.MyFileDecrypt(c,iv,tag,encKey,hKey, ext)
  return decryption

@@ -1,12 +1,11 @@
 import os
 import constants
-import myEncryption
+import myEncryptionMAC
 import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import(Cipher, algorithms, modes)
-from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives import padding, serialization, hmac
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization
 def MyDecrypt(cipherText,IV, tag, key, hKey):
 	print ("Attempting to decrypt message...")
 	#Load hKey and verify it matches with the tag

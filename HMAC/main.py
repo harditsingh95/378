@@ -1,9 +1,9 @@
 #Various imports 
-import myEncryption
-import myDecryption
+import myEncryptionMAC
+import myDecryptionMAC
 import os
 import constants
-import RSAEncrypt
+import RSAEncryptMAC
 import json
 from base64 import b64encode, b64decode
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -50,7 +50,7 @@ def main():
 			encryptedFile = promptForFile()
 			print ("Enter location of the public key (.pub extension): ")
 			rsaPath = promptForFile()
-			RSACipher, cipher, IV, ext = RSAEncrypt.myRSAEncrypt(encryptedFile,rsaPath)
+			RSACipher, cipher, IV, ext = RSAEncryptMAC.myRSAEncrypt(encryptedFile,rsaPath)
 	#Prompt user for what they would like to save the name as and add custom extension
 			saveAs = input("Save encrypted file as (will be assigned .cryp extension: ")
 			fileEncrypted = saveAs + ".cryp"
@@ -70,7 +70,7 @@ def main():
 			RSACipher, cipher, IV, ext= jsonUnpack(dFile)
 			print("Enter location of private key(.pem extension):")
 			privPath = promptForFile()
-			RSAEncrypt.myRSADecrypt(RSACipher, cipher, IV, ext, privPath)
+			RSAEncryptMAC.myRSADecrypt(RSACipher, cipher, IV, ext, privPath)
 		elif opCommand == '4':
 			print("Exiting...")
 			break;

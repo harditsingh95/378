@@ -4,9 +4,8 @@ from base64 import b64encode,b64decode
 import constants
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import(Cipher, algorithms, modes)
-from cryptography.hazmat.primitives import padding
+from cryptography.hazmat.primitives import padding, serialization, hashes, hmac
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.primitives import serialization, hmac
 def MyEncrypt(message, key, hmacKey):
 	if len(key) == 32:
 		#Generate random variable for IV lrngth of ivLength

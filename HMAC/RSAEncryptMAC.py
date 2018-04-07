@@ -1,15 +1,14 @@
 import os 
-import myEncryption
-import myDecryption
+import myEncryptionMAC
+import myDecryptionMAC
 import constants
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa 
 from cryptography.hazmat.primitives.asymmetric import padding 
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization, hmac
+from cryptography.hazmat.primitives import hashes, serialization, hmac
 def myRSAEncrypt(filepath,RSA_publickey_filepath):
   #Encrypt file
-  cipher, IV, tag, key, hmacKey, ext = myEncryption.MyFileEncrypt(filepath)
+  cipher, IV, tag, key, hmacKey, ext = myEncryptionMAC.MyFileEncrypt(filepath)
   #Load key and create RSACipher
   pubKey = serialization.load_pem_public_key(open(RSA_publickey_filepath, "rb").read(),backend=default_backend())
   #Concatenated key and HMAC key. Need to find a way to read it
@@ -25,5 +24,5 @@ def myRSADecrypt(RSACiph, c, iv, tag, ext, privPath):
  encKey = rsa1
  hKey = rsa2
  #Pass decrypted key along with other params to decrypt
- myDecryption.MyFileDecrypt(c,iv,tag,encKey,hKey, ext)
+ myDecryptionMAC.MyFileDecrypt(c,iv,tag,encKey,hKey, ext)
  return decryption

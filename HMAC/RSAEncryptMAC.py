@@ -6,6 +6,8 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.asymmetric import rsa 
 from cryptography.hazmat.primitives.asymmetric import padding 
 from cryptography.hazmat.primitives import hashes, serialization, hmac
+
+
 def myRSAEncrypt(filepath,RSA_publickey_filepath):
   #Encrypt file
   cipher, IV, tag, key, hmacKey, ext = myEncryptionMAC.MyFileEncrypt(filepath)
@@ -19,10 +21,9 @@ def myRSADecrypt(RSACiph, c, iv, tag, ext, privPath):
  #Open key at privpath and decrypt it, then pass to function.
  privKey = open(privPath, "rb").read()
  key  = serialization.load_pem_private_key(privKey, password=None, backend=default_backend())
- decryption = key.decrypt(RSACiph, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),algorithm=hashes.SHA256(), label=None))
- #Need to find way to separate HMAC from RSA ciph for decryption var
- encKey = rsa1
- hKey = rsa2
+ decryptedKeys = key.decrypt(RSACiph, padding.OAEP(mgf=padding.MGF1(algorithm=hashes.SHA256()),algorithm=hashes.SHA256(), label=None))
+ #Encrypyion key will be first 32 chars, hKey is second set of 32
+ encKey = decryptedKeys[0:constants.keyLength]
+ hKey = decryptedKeys[constants.keyLength:]
  #Pass decrypted key along with other params to decrypt
  myDecryptionMAC.MyFileDecrypt(c,iv,tag,encKey,hKey, ext)
- return decryption

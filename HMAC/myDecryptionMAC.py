@@ -4,12 +4,12 @@ import myEncryptionMAC
 import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import(Cipher, algorithms, modes)
-from cryptography.hazmat.primitives import padding, serialization, hmac
+from cryptography.hazmat.primitives import padding, serialization, hashes, hmac
 from cryptography.hazmat.primitives.asymmetric import rsa
 def MyDecrypt(cipherText,IV, tag, key, hKey):
 	print ("Attempting to decrypt message...")
 	#Load hKey and verify it matches with the tag
-	hm = hmac.HMAC(kKey, hashes.SHA256(), backend=default_backend())
+	hm = hmac.HMAC(hKey, hashes.SHA256(), backend=default_backend())
 	hm.update(cipherText)
 	hm.verify(tag)
 	#Generate plain text from given cipherText
@@ -20,9 +20,9 @@ def MyDecrypt(cipherText,IV, tag, key, hKey):
 	plainText = unpadder.update(plainText) + unpadder.finalize()
 	return plainText
 
-def MyFileDecrypt(cipher, iv, tag, key, hKey, ext):
+def MyFileDecrypt(cipher, iv, tag, encKey, hKey, ext):
 	#Get plaintext from cipherText in MyDecrypt function
-	plainText = MyDecrypt(cipher, iv,tag, key ,hKey)
+	plainText = MyDecrypt(cipher, iv, tag, encKey ,hKey)
 	#Ask user for filename for new file
 	fileLoc = input("What would you like to save the file as? ")
 	newFile = fileLoc + ext

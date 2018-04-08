@@ -18,9 +18,9 @@ def MyEncrypt(message, key, hmacKey):
 		cipherText = encryptor.update(padData) +encryptor.finalize()
 		##cipherText = encryptor.update(byteMessage) + encryptor.finalize()
 		#HMAC Implementation
-		tag = hmac.HMAC(hmacKey, hashes.SHA256(), backend=default_backend())
-		tag.update(cipherText)
-		tag.finalize()
+		tG = hmac.HMAC(hmacKey, hashes.SHA256(), backend=default_backend())
+		tG.update(cipherText)
+		tag = tG.finalize()
 	else:
 		cipherText = 0;
 		IV = 0

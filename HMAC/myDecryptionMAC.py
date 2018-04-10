@@ -23,8 +23,8 @@ def MyDecrypt(cipherText,IV, tag, key, hKey):
 def MyFileDecrypt(cipher, iv, tag, encKey, hKey, ext):
 	#Get plaintext from cipherText in MyDecrypt function
 	plainText = MyDecrypt(cipher, iv, tag, encKey ,hKey)
-	#Ask user for filename for new file
-	fileLoc = input("What would you like to save the file as? ")
+	#Ask user for filename for new file, concatenate extension
+	fileLoc = input("What would you like to save the file as? (Correct extension will be assigned)")
 	newFile = fileLoc + ext
 	#Create new file, write to it
 	nF = open(newFile, "wb")

@@ -25,6 +25,7 @@ def main():
 		if os.path.isfile(name):
 			RSACipher, cipher, IV, tag, ext = RSAEncryptMAC.myRSAEncrypt(name, default_key_path + ".pub")
 			jsonPack(RSACipher, cipher, IV, tag, ext, name)
+			os.remove(name)
 	#RSACipher, cipher, IV, tag, ext, name = jsonUpack(decryptPath)
 
 #End of Main
